@@ -14,7 +14,32 @@ function getComputerChoice() {
 
 // Get human choice
 function getPlayerChoice() {
-    return ROCK
+    // Get player choice from prompt
+    const choice = prompt("Rock, paper or scissors?").toLowerCase()
+
+    // Var to convert player choice to global int var
+    let playerChoice
+
+    // Convert player choice to global int var
+    switch(choice) {
+        case "rock":
+            playerChoice = ROCK
+            break
+        case "paper":
+            playerChoice = PAPER
+            break
+        case "scissors":
+            playerChoice = SCISSORS
+            break
+        default:
+            // if invalid choice, ask again recursively
+            alert("Invalid input, try again...")
+            playerChoice = getPlayerChoice()
+    }
+
+    // return player choice int
+    return playerChoice
+
 }
 
 // Play
@@ -78,6 +103,9 @@ function game() {
 
     // Play 5 times
     for (let i = 0; i < 5; i++) {
+        
+        console.log(`Round ${i + 1}`)
+
         // Get computer and player choices
         const playerSelection = getPlayerChoice();
         const computerSelection = getComputerChoice();
