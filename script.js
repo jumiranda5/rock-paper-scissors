@@ -1,4 +1,4 @@
-// Game variables
+// Game constants
 const ROCK = 1
 const PAPER = 2
 const SCISSORS = 3
@@ -6,126 +6,134 @@ const TIE = 0
 const WIN = 1
 const LOSE = 2
 
-// Get computer choice
+
+// Variables to store the scores
+let playerScore = 0
+let computerScore = 0
+
+
+// Computer choice => get random number from 1 to 3
 function getComputerChoice() {
-    // Get random number from 1 to 3
     return Math.floor(Math.random() * 3) + 1;
 }
 
-// Get human choice
-function getPlayerChoice() {
-    // Get player choice from prompt
-    const choice = prompt("Rock, paper or scissors?").toLowerCase()
 
-    // Var to convert player choice to global int var
-    let playerChoice
+// Buttons
+const btnRock = document.querySelector('#btn-rock');
+const btnPaper = document.querySelector('#btn-paper');
+const btnScissors = document.querySelector('#btn-scissors');
 
-    // Convert player choice to global int var
-    switch(choice) {
-        case "rock":
-            playerChoice = ROCK
-            break
-        case "paper":
-            playerChoice = PAPER
-            break
-        case "scissors":
-            playerChoice = SCISSORS
-            break
-        default:
-            // if invalid choice, ask again recursively
-            alert("Invalid input, try again...")
-            playerChoice = getPlayerChoice()
-    }
+btnRock.addEventListener('click', () => playRound(ROCK));
 
-    // return player choice int
-    return playerChoice
+btnPaper.addEventListener('click', () => playRound(PAPER));
 
-}
+btnScissors.addEventListener('click', () => playRound(SCISSORS));
 
-// Play
-function playRound(playerSelection, computerSelection) {
+
+// Rounds => compare user and computer choices and update scores and DOM
+function playRound(playerSelection) {
+
+    const computerSelection = getComputerChoice()
+
+    let result;
 
     switch (playerSelection) {
         case ROCK:
-            if (computerSelection === ROCK) {
-                console.log("It's a tie!")
-                return TIE
-            }
-            else if (computerSelection == PAPER) {
-                console.log("You lose! Paper beats Rock.")
-                return LOSE
-            }
-            else if (computerSelection == SCISSORS) {
-                console.log("You win! Rock beats scissors.")
-                return WIN
-            }
+            if (computerSelection === ROCK) result = TIE
+            else if (computerSelection == PAPER) result = LOSE
+            else if (computerSelection == SCISSORS) result = WIN
             break
         case PAPER:
-            if (computerSelection === PAPER) {
-                console.log("It's a tie!")
-                return TIE
-            }
-            else if (computerSelection == ROCK) {
-                console.log("You win! Paper beats Rock.")
-                return WIN
-            }
-            else if (computerSelection == SCISSORS) {
-                console.log("You lose! Scissors beats paper.")
-                return LOSE
-            }
+            if (computerSelection === PAPER) result = TIE
+            else if (computerSelection == ROCK) result = WIN
+            else if (computerSelection == SCISSORS) result = LOSE
             break
         case SCISSORS:
-            if (computerSelection === SCISSORS) {
-                console.log("It's a tie!")
-                return TIE
-            }
-            else if (computerSelection == PAPER) {
-                console.log("You win! Scissors beats paper.")
-                return WIN
-            }
-            else if (computerSelection == ROCK) {
-                console.log("You lose! Rock beats scissors.")
-                return LOSE
-            }
+            if (computerSelection === SCISSORS) result = TIE
+            else if (computerSelection == PAPER) result = WIN
+            else if (computerSelection == ROCK) result = LOSE
             break
         default:
-            return "Invalid match"
+            console.log("Invalid match")
+    }
+
+    updateScores(result, playerSelection, computerSelection)
+    showEmojis(playerSelection, computerSelection)
+
+}
+
+
+// Update scores and add DOM partial result text
+function updateScores(result, playerSelection, computerSelection) {
+    
+    const partialResult = document.querySelector("#partial-result")
+    const score = document.querySelector("#score")
+    const playerText = getChoiceText(playerSelection)
+    const computerText = getChoiceText(computerSelection)
+
+    if (result === WIN) {
+        playerScore++
+        partialResult.textContent = `You win! ${playerText} beats ${computerText.toLowerCase()}.`
+    }
+    else if (result === LOSE) {
+        computerScore++
+        partialResult.textContent = `You lose! ${computerText} beats ${playerText.toLowerCase()}.`
+    }
+    else {
+        playerScore++
+        computerScore++
+        partialResult.textContent = "It's a tie!"
+    }
+
+    score.textContent = `Human ${playerScore} x ${computerScore} Computer`
+
+    // End game if first player reaches 5 points
+    if (playerScore === 5 || computerScore === 5) {
+        showFinalResult()
     }
 
 }
 
-// Game function
-function game() {
 
-    // Variables to store scores
-    let playerScore = 0
-    let computerScore = 0
-
-    // Play 5 times
-    for (let i = 0; i < 5; i++) {
-        
-        console.log(`Round ${i + 1}`)
-
-        // Get computer and player choices
-        const playerSelection = getPlayerChoice();
-        const computerSelection = getComputerChoice();
-
-        // Play round and update scores
-        const result = playRound(playerSelection, computerSelection)
-        if (result === WIN) {
-            playerScore++
-        }
-        else if (result === LOSE) {
-            computerScore++
-        }
-        else {
-            playerScore++
-            computerScore++
-        }
-    }
-
-    console.log(`Computer score: ${computerScore} x Player score: ${playerScore}`)
-
+// Convert choice int to text
+function getChoiceText(choice) {
+    if (choice === ROCK) return "Rock"
+    else if (choice === PAPER) return "Paper"
+    else if (choice === SCISSORS) return "Scissors"
 }
 
-game()
+
+// Show player and computer choices as emojis on results div
+function showEmojis(playerSelection, computerSelection) {
+    const human = document.querySelector("#human")
+    const computer = document.querySelector("#computer")
+
+    human.innerHTML = getEmoji(playerSelection)
+    computer.innerHTML = getEmoji(computerSelection)
+}
+
+function getEmoji(choice) {
+    if (choice === ROCK) return "&#9994;"
+    else if (choice === PAPER) return "&#9995;"
+    else if (choice === SCISSORS) return "&#9996;"
+}
+
+
+// Update DOM => show final result text, hide game buttons, show "clear" button
+function showFinalResult() {
+    
+    const finalResult = document.querySelector("#final-result")
+
+    if (playerScore === computerScore) {
+        finalResult.textContent = "It's a tie!"
+    }
+    else if (playerScore > computerScore) {
+        finalResult.textContent = "Congratulations! You won!"
+    }
+    else {
+        finalResult.textContent = "Sorry, you lost..."
+    }
+
+    // Todo: hide/show elements according to game phase
+
+}
