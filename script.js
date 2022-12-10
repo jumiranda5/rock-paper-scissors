@@ -22,12 +22,15 @@ function getComputerChoice() {
 const btnRock = document.querySelector('#btn-rock');
 const btnPaper = document.querySelector('#btn-paper');
 const btnScissors = document.querySelector('#btn-scissors');
+const btnClear = document.querySelector('#clear');
 
 btnRock.addEventListener('click', () => playRound(ROCK));
 
 btnPaper.addEventListener('click', () => playRound(PAPER));
 
 btnScissors.addEventListener('click', () => playRound(SCISSORS));
+
+btnClear.addEventListener('click', () => clear() );
 
 
 // Rounds => compare user and computer choices and update scores and DOM
@@ -80,12 +83,10 @@ function updateScores(result, playerSelection, computerSelection) {
         partialResult.textContent = `You lose! ${computerText} beats ${playerText.toLowerCase()}.`
     }
     else {
-        playerScore++
-        computerScore++
         partialResult.textContent = "It's a tie!"
     }
 
-    score.textContent = `Human ${playerScore} x ${computerScore} Computer`
+    score.textContent = `${playerScore} x ${computerScore}`
 
     // End game if first player reaches 5 points
     if (playerScore === 5 || computerScore === 5) {
@@ -112,6 +113,7 @@ function showEmojis(playerSelection, computerSelection) {
     computer.innerHTML = getEmoji(computerSelection)
 }
 
+
 function getEmoji(choice) {
     if (choice === ROCK) return "&#9994;"
     else if (choice === PAPER) return "&#9995;"
@@ -121,19 +123,42 @@ function getEmoji(choice) {
 
 // Update DOM => show final result text, hide game buttons, show "clear" button
 function showFinalResult() {
-    
+
+    const finalResultDiv = document.querySelector("#reset-div")
+    const btnDiv = document.querySelector("#btn-div")
     const finalResult = document.querySelector("#final-result")
 
-    if (playerScore === computerScore) {
-        finalResult.textContent = "It's a tie!"
-    }
-    else if (playerScore > computerScore) {
+    btnDiv.classList.add('hidden');
+    finalResultDiv.classList.remove('hidden');                                   
+
+    if (playerScore > computerScore) {
         finalResult.textContent = "Congratulations! You won!"
     }
     else {
         finalResult.textContent = "Sorry, you lost..."
     }
 
-    // Todo: hide/show elements according to game phase
+}
+
+
+function clear() {
+
+    const finalResultDiv = document.querySelector("#reset-div")
+    const btnDiv = document.querySelector("#btn-div")
+    const finalResult = document.querySelector("#final-result")
+    const human = document.querySelector("#human")
+    const computer = document.querySelector("#computer")
+    const partialResult = document.querySelector("#partial-result")
+    const score = document.querySelector("#score")
+    playerScore = 0
+    computerScore = 0
+
+    btnDiv.classList.remove("hidden")
+    finalResultDiv.classList.add("hidden")
+    finalResult.textContent = ""
+    human.innerHTML = ""
+    computer.innerHTML = ""
+    partialResult.textContent = ""
+    score.textContent = `${playerScore} x ${computerScore}`
 
 }
